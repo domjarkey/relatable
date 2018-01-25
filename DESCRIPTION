@@ -1,11 +1,14 @@
 Package: relatable
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Fast and robust functions for mapping key-value pairs and working with many-to-many, one-to-many, and many-to-one relations.
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: person("Dominic", "Jarkey", email = "dominic.jarkey@gmail.com", role = c("aut", "cre"))
+Maintainer: Dominic Jarkey <dominic.jarkey@gmail.com>
+Description: Functions to safely map from a vector of keys to a vector of values, determine properties of a given relation, or ensure a relation conforms to a given type, such as many-to-many, one-to-many, injective, surjective, or bijective. Permits default return values for use similar to a vectorised switch statement, as well as safely handling NAs, NULLs, and duplicate mappings.
+Depends: R (>= 3.4.3)
+Imports:
+    compare (>= 0.2-6)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.0.1
