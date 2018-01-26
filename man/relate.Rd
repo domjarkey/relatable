@@ -189,16 +189,8 @@ relate(
 # $Dunleavy
 # [1] "Theories of the Democratic State"
 
-## Use handle_duplicate_mappings to avoid errors resulting from duplicate mappings
-relate(
-  X = c(1, 2, 3),
-  A = c(1, 2, 2, 3, 4, 5),
-  B = c('a', 'b', 'b', 'c', 'd', 'e'),
-  relation_type = "bijection",
-  error_response = "throw"
-)
-# Error in relate(X = c(1, 2, 3), A = c(1, 2, 2, 3, 4, 5), B = c("a", "b",  :
-#     Vector A contains duplicate elements which may map to different elements in the codomain.
+## Use relation with handle_duplicate_mappings = TRUE (this is TRUE by default)
+## to avoid errors resulting from duplicate mappings
 nums_to_letters <- relation(
   A = c(1, 2, 2, 3, 4, 5),
   B = c('a', 'b', 'b', 'c', 'd', 'e'),

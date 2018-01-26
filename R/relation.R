@@ -204,7 +204,7 @@ relation <- function(A, B,
             function(x_index) {
               ifelse(
                 x_index <= length(B),
-                unique(B[[x_index]]),
+                unique(B[x_index]),
                 default_behaviour(x)
               )
             }
@@ -225,7 +225,7 @@ relation <- function(A, B,
             function(x_index) {
               ifelse(
                 x_index <= length(B),
-                unique(B[[x_index]]),
+                unique(B[x_index]),
                 default_behaviour(x)
               )
             }
@@ -261,7 +261,7 @@ relation <- function(A, B,
       rel_func <- function(X) {
         Y <- rep(default, length(X))
         for (i in seq_along(X)) {
-          Y[[i]] <- rel(X[[i]])
+          Y[[i]] <- unname(rel(X[[i]]))
         }
         Y
       }
@@ -269,7 +269,7 @@ relation <- function(A, B,
       rel_func <- function(X) {
         Y <- as.list(rep(default, length(X)))
         for (i in seq_along(X)) {
-          Y[[i]] <- rel(X[[i]])
+          Y[[i]] <- unname(rel(X[[i]]))
         }
         Y
       }
