@@ -110,7 +110,7 @@ relation <- function(A, B,
     }
   }
   # Check atomic outputs are allowed
-  if (atomic && (props$max_one_y_per_x == FALSE)) {
+  if (atomic && (props$max_one_y_per_x == FALSE || heterogeneous_outputs == TRUE)) {
     stop('Many-to-many and one-to-many relations can only return list vectors. Use atomic = FALSE.')
   }
   # Check properties as necessary
@@ -147,43 +147,54 @@ relation <- function(A, B,
       d <- d + 1
     }
     # Compute the image of relation R(A) and image of inverse relation R_inv(B)
-    im <- relate(A, A, B, default = d, atomic = FALSE, relation_type = NULL, named = F)
-    inv_im <- relate(B, B, A, default = c, atomic = FALSE, relation_type = NULL, named = F)
+    im <- relate(A, A, B,
+      default = d,
+      atomic = FALSE,
+      relation_type = NULL,
+      heterogeneous_outputs = TRUE)
+    inv_im <- relate(B, B, A,
+      default = c,
+      atomic = FALSE,
+      relation_type = NULL,
+      heterogeneous_outputs = TRUE)
     # Check if min_one_y_per_x holds
     if (sum(sapply(im, function(b) compare::compareCoerce(b, d)$result)) == 0) {
       precise_properties$min_one_y_per_x = TRUE
     }
-    # if (sum(suppressWarnings(im == D), na.rm = TRUE) == 0) precise_properties$min_one_y_per_x = TRUE
     # Check if min_one_x_per_y holds
     if (sum(sapply(inv_im, function(a) compare::compareCoerce(a, c)$result)) == 0) {
       precise_properties$min_one_x_per_y = TRUE
     }
-    # if (sum(suppressWarnings(inv_im == D), na.rm = TRUE) == 0) precise_properties$min_one_x_per_y = TRUE
     # Check if max_one_y_per_x does not hold
     for (i in seq_len(min(length(A), length(B)))) {
-      if (compare::compareCoerce(B[i], unique(im[i]))$result == FALSE) {
+      if (compare::compareCoerce(B[i], unique(im[[i]]))$result == FALSE) {
         precise_properties$max_one_y_per_x = FALSE
         break
       }
     }
     # Check if max_one_x_per_y does not hold
     for (i in seq_len(min(length(A), length(B)))) {
-      if (compare::compareCoerce(A[i], unique(inv_im[i]))$result == FALSE) {
+      if (compare::compareCoerce(A[i], unique(inv_im[[i]]))$result == FALSE) {
         precise_properties$max_one_x_per_y = FALSE
         break
       }
     }
     # Report properties
     if (report_properties) {
-      cat("Relation properties:\n")
-      print(unlist(precise_properties))
+      message(
+        "Relation properties:\n",
+        paste(names(precise_properties),
+          precise_properties,
+          sep = ": ",
+          collapse = "\n"))
     }
     # Compare true properties to restrictions
     violated_restrictions <- unlist(precise_properties) < unlist(props)
     if (sum(violated_restrictions) > 0) {
-      warning(
+      stop(
         "Restrictions violated:\n",
-        paste(names(props)[violated_restrictions], collapse = "; ")
+        paste(names(props)[violated_restrictions],
+          collapse = "\n")
       )
     }
   }

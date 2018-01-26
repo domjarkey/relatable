@@ -215,7 +215,7 @@ relate <- function(X, A, B,
   A <- as.list(A); B <- as.list(B)
   # How to deal with errors
   if (!(error_response %in% VALID_ERROR_RESPONSES)) {
-    stop('\"', error_response, '\"', ' not a valid error response. Use \"ignore\", \"warn\", or \"throw\".')
+    stop('\"', error_response, '\"', ' is not a valid input for error_response. Use \"ignore\", \"warn\", or \"throw\".')
   } else {
     err <- switch(
       error_response,
@@ -311,8 +311,8 @@ relate <- function(X, A, B,
     }
   }
   # Check atomic outputs are allowed
-  if (atomic && (props$max_one_y_per_x == FALSE)) {
-    stop('Many-to-many and one-to-many relations can only return list vectors. Use atomic = FALSE')
+  if (atomic && (props$max_one_y_per_x == FALSE || heterogeneous_outputs == TRUE)) {
+    stop('Many-to-many and one-to-many relations can only return list vectors. Use atomic = FALSE.')
   }
   # Check other properties if necessary
   if (sum(unlist(props)) > 0) {
