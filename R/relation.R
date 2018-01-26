@@ -7,12 +7,13 @@ relation <- function(A, B,
   named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
-  relation_type = "func",
+  relation_type = "one_to_one",
   restrictions = list(),
   handle_duplicate_mappings = TRUE,
   report_properties = FALSE) {
   # list of valid arguments
   VALID_TYPES <- c(
+    "one_to_one",
     "many_to_many",
     "one_to_many",
     "many_to_one",
@@ -48,6 +49,13 @@ relation <- function(A, B,
     } else {
       props <- switch(
         relation_type,
+        one_to_one =
+          list(
+            "min_one_y_per_x" = FALSE,
+            "min_one_x_per_y" = FALSE,
+            "max_one_y_per_x" = TRUE,
+            "max_one_x_per_y" = TRUE
+          ),
         many_to_many =
           list(
             "min_one_y_per_x" = FALSE,

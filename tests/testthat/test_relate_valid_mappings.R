@@ -45,3 +45,18 @@ test_that("relate outputs correct vectors for non-one-to-one relations",	{
     atomic = FALSE),
     list(a = 1, b = c(2, 3), c = 4, d = 4))
 })
+
+# test_that("relate outputs default values as required",	{
+#   A1 <- c("a", "b", "c", "d")
+#   A2 <- c("a", "b", "c")
+#   B1 <- c(1, 2, 3, 4)
+#   B2 <- c(1, 2, 3)
+#   expect_identical(relate(c("e"), A1, B1),
+#     NA)
+#   expect_identical(relate(c("a", "e"), A1, B1,
+#     default = 0),
+#     c(1, 0))
+#   expect_identical(relate(c("a", "d"), A1, B2,
+#     default = 0),
+#     c(1, 0))
+# })
