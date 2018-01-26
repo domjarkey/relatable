@@ -7,11 +7,12 @@
 \usage{
 relate(X, A, B, default = NA, atomic = TRUE, named = FALSE,
   allow_default = TRUE, heterogeneous_outputs = FALSE,
-  relation_type = "func", restrictions = list(), error_response = "warn")
+  relation_type = "one_to_one", restrictions = list(),
+  error_response = "warn")
 
 relation(A, B, default = NA, atomic = TRUE, named = FALSE,
   allow_default = TRUE, heterogeneous_outputs = FALSE,
-  relation_type = "func", restrictions = list(),
+  relation_type = "one_to_one", restrictions = list(),
   handle_duplicate_mappings = TRUE, report_properties = FALSE)
 }
 \arguments{
@@ -67,6 +68,11 @@ The relation \eqn{F} can be restricted so it conforms to a particular type speci
 }
 \strong{Relation types}
 \describe{
+  \item{\code{relation_type = "one_to_one"}}{One-to-one relations require that each element in the domain to map to at most one element in the codomain, and each element of the codomain to map from the only one element in the domain. There may still be elements in \code{A} that do not have a mapping to an element in \code{B}, and vice versa. This is equivalent to
+\code{restrictions = list("min_one_y_per_x" = FALSE,
+"min_one_x_per_y" = FALSE,
+"max_one_y_per_x" = TRUE,
+"max_one_x_per_y" = TRUE)}}
   \item{\code{relation_type = "many_to_many"}}{Many-to-many relations allow multiple elements in the domain to map to the same element of the codomain, and multiple elements of the codomain to map from the same element of the domain. This is equivalent to
 \code{restrictions = list("min_one_y_per_x" = FALSE,
 "min_one_x_per_y" = FALSE,
@@ -97,7 +103,7 @@ The relation \eqn{F} can be restricted so it conforms to a particular type speci
 "min_one_x_per_y" = TRUE,
 "max_one_y_per_x" = TRUE,
 "max_one_x_per_y" = FALSE)}}
-\item{\code{relation_type = "bijection"}}{A function is bijective if it is both injective and surjective, i.e. a one-to-one mapping. This is equivalent to
+\item{\code{relation_type = "bijection"}}{A function is bijective if it is both injective and surjective, i.e. a complete one-to-one mapping. This is equivalent to
 \code{restrictions = list("min_one_y_per_x" = TRUE,
 "min_one_x_per_y" = TRUE,
 "max_one_y_per_x" = TRUE,

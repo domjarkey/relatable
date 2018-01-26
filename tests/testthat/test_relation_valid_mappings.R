@@ -28,6 +28,7 @@ test_that("relation outputs correct vectors for non-one-to-one relations",	{
     relation_type = "many_to_one")(c("a", "b", "c")),
     c(1, 2, 2))
   expect_identical(relation(A1, B2,
+    relation_type = NULL,
     restrictions = list(max_one_y_per_x = TRUE))(c("a", "b", "c")),
     c(1, 2, 2))
   expect_identical(relation(A2, B1,

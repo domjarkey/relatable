@@ -212,6 +212,7 @@ relate <- function(X, A, B,
     "warn",
     "throw"
   )
+  A <- as.list(A); B <- as.list(B)
   # How to deal with errors
   if (!(error_response %in% VALID_ERROR_RESPONSES)) {
     stop('\"', error_response, '\"', ' not a valid error response. Use \"ignore\", \"warn\", or \"throw\".')
@@ -338,64 +339,55 @@ relate <- function(X, A, B,
     function(x) default,
     function(x) stop(x, " does not have a valid mapping to an element in the codomain.")
   )
-  # If return elements y of Y as lists or atomic vectors
-  apply_func <- ifelse(
-    heterogeneous_outputs,
-    lapply,
-    sapply
+  # Define a function to perform mapping F
+  rel <- function(x) {
+    if (x %in% A || (is.na(x) && list(x) %in% A)) {
+      x_occurrences <- vapply(A,
+        function(a) compare::compareCoerce(list(a), x)$result,
+        FUN.VALUE = logical(1))
+      x_indeces <- which(x_occurrences)
+      if (length(x_indeces) != 0) {
+        y <- sapply(
+          x_indeces,
+          function(x_index) {
+            ifelse(
+              x_index <= length(B),
+              unique(B[x_index]),
+              default_behaviour(x)
+            )
+          }
+        )
+        return(y)
+      }
+    } else return(default_behaviour(x))
+  }
+  ifelse(
+    atomic,
+    Y <- vector("logical", length(X)),
+    Y <- as.list(vector("logical", length(X)))
   )
-  rel <- ifelse(
-    props$max_one_y_per_x,
-    function(x) {
-      if (x %in% A || (is.na(x) && list(x) %in% A)) {
-        x_occurrences <- vapply(A,
-          function(a) compare::compareCoerce(a, x)$result,
-          FUN.VALUE = logical(1))
-        x_indeces <- which(x_occurrences)
-        if (length(x_indeces) != 0) {
-          y <- apply_func(
-            x_indeces,
-            function(x_index) {
-              ifelse(
-                x_index <= length(B),
-                unique(B[x_index]),
-                default_behaviour(x)
-              )
-            }
-          )
-          return(y[[1]])
-        }
-      } else return(default_behaviour(x))
-    },
-    function(x) {
-      if (x %in% A || (is.na(x) && list(x) %in% A)) {
-        x_occurrences <- x_occurrences <- vapply(A,
-          function(a) compare::compareCoerce(a, x)$result,
-          FUN.VALUE = logical(1))
-        x_indeces <- which(x_occurrences)
-        if (length(x_indeces) != 0) {
-          y <- apply_func(
-            x_indeces,
-            function(x_index) {
-              ifelse(
-                x_index <= length(B),
-                unique(B[x_index]),
-                default_behaviour(x)
-              )
-            }
-          )
-          return(y)
-        }
-      } else return(default_behaviour(x))
-    }
-  )
-  Y <- as.list(rep(default, length(X)))
   if (named) names(Y) <- as.character(X)
   for (i in seq_along(X)) {
-    Y[[i]] <- unname(rel(X[[i]]))
+    y <- unname(rel(X[i]))
+    if (props$max_one_y_per_x) {
+      Y[[i]] <- y[[1]]
+    } else if (heterogeneous_outputs) {
+      Y[[i]] <- y
+    } else {
+      Y[[i]] <- unlist(y)
+    }
   }
-  if (atomic) {
-    return(unlist(Y))
-  }
+  # if (atomic) {
+  #   for (i in seq_along(X)) {
+  #     Y[i] <- unlist(unname(rel(X[i])))
+  #   }
+  # } else {
+  #   for (i in seq_along(X)) {
+  #     Y[i] <- unname(rel(X[i]))
+  #   }
+  # }
+  # if (atomic) {
+  #   return(unlist(Y))
+  # }
   Y
 }
