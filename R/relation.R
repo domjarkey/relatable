@@ -4,7 +4,7 @@
 relation <- function(A, B,
   default = NA,
   atomic = TRUE,
-  named = FALSE,
+  named = TRUE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
   relation_type = "one_to_one",

@@ -184,7 +184,7 @@
 relate <- function(X, A, B,
   default = NA,
   atomic = TRUE,
-  named = FALSE,
+  named = TRUE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
   relation_type = "one_to_one",
@@ -377,17 +377,5 @@ relate <- function(X, A, B,
       Y[[i]] <- unlist(y)
     }
   }
-  # if (atomic) {
-  #   for (i in seq_along(X)) {
-  #     Y[i] <- unlist(unname(rel(X[i])))
-  #   }
-  # } else {
-  #   for (i in seq_along(X)) {
-  #     Y[i] <- unname(rel(X[i]))
-  #   }
-  # }
-  # if (atomic) {
-  #   return(unlist(Y))
-  # }
   Y
 }

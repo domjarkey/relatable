@@ -5,12 +5,12 @@
 \alias{relation}
 \title{Map inputs from a vector of keys to a vector of values.}
 \usage{
-relate(X, A, B, default = NA, atomic = TRUE, named = FALSE,
+relate(X, A, B, default = NA, atomic = TRUE, named = TRUE,
   allow_default = TRUE, heterogeneous_outputs = FALSE,
   relation_type = "one_to_one", restrictions = list(),
   error_response = "warn")
 
-relation(A, B, default = NA, atomic = TRUE, named = FALSE,
+relation(A, B, default = NA, atomic = TRUE, named = TRUE,
   allow_default = TRUE, heterogeneous_outputs = FALSE,
   relation_type = "one_to_one", restrictions = list(),
   handle_duplicate_mappings = TRUE, report_properties = FALSE)
