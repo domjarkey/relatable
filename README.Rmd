@@ -44,7 +44,7 @@ relate(c(12, 14), keys, values)
 
 ## Create a function for repeat usage
 num_to_word <- relation(keys, values)
-num_to_word(13:15)
+num_to_word(c(12, 14))
 
 ## Both of these require fewer lines of code, and additionally
 ## do not require keys to be coerced to strings

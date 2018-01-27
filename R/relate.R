@@ -9,16 +9,16 @@
 #' @param default The default value to return if the value of \eqn{F(x)} is undefined.
 #' @param atomic If \code{TRUE}, the return vector \eqn{Y} will be atomic; If \code{TRUE} \eqn{Y} will be a list vector. To allow for multiple outputs from a single input, \code{atomic} must be set to \code{FALSE} if \code{relation_type = "many_to_many"} or \code{"one_to_many"}, or if \code{relation_type = NULL} and \code{max_one_y_per_x = FALSE} is an element of \code{restrictions} list.
 #' @param named The elements of the returned vector \eqn{Y} will be named by to their corresponding inputs in X.
-#' @param allow_default If TRUE, the provided default will be returned when \eqn{F(x)} is undefined; otherwise invalid mappings will return an error determined by the \code{error_response} argument.
+#' @param allow_default If TRUE, the provided default will be returned when \eqn{F(x)} is undefined; otherwise invalid mappings will return an error determined by the \code{map_error_response} argument.
 #' @param heterogeneous_outputs By default, elements \eqn{y} of the output vector \eqn{Y} will be returned as atomic vectors. In many-to-many and one-to-many relations, if the elements in the codomain are not all of the same type, this will coerce outputs to the same type. Set \code{heterogeneous_outputs = TRUE} to return each \eqn{y} as a list vector. This will avoid coercion of individual outputs to the same type, but may also result in messy nested list vectors.
 #' @param relation_type Ensure that the relation is restricted to a certain type, e.g. "bijection". See Details.
 #' @param restrictions A named list of logicals imposing constraints on the relation. These will only be used if relation_type is \emph{NULL}. See Details.
-#' @param error_response How to deal with mapping errors caused by violated restrictions. Takes values "ignore", "warn", or "throw".
+#' @param map_error_response How to deal with mapping errors caused by violated restrictions. Takes values "ignore", "warn", or "throw".
 #' @param handle_duplicate_mappings If \code{TRUE}, each possible input/output pair in the returned function \eqn{F} for duplicate mappings and removes them. This may increase the runtime of \code{relation} slightly (although will not affect the runtime of \eqn{F}). If \code{handle_duplicate_mappings = FALSE}, duplicate mappings from \code{A} to \code{B} in \code{relation} will throw an error. See Examples.
 #' @param report_properties If \code{TRUE}, \code{relation} reports which restrictions \eqn{F} conforms to. See Details.
 #' @details \code{relate} returns vector of outputs \eqn{Y = F(X)} where the \eqn{F} is a relation defined by the collection of ordered pairs \eqn{(a_i, b_i)} where \eqn{a_i, b_i} are the \eqn{i}th elements of \code{A} and \code{B} respectively. If \eqn{F(x)} is undefined because \eqn{x} is not in \eqn{A} or it does not map to an element of \code{B}, \code{relate} will either return \code{default} if \code{allow_default = TRUE}.  Otherwise the function will throw an error.
 #'
-#' The relation \eqn{F} can be restricted so it conforms to a particular type specified, for example \code{relation_type = "one_to_many"}. If \code{relation_type = NULL}, the properties are determined by restrictions specified with a named list, for example \code{restrictions = list(min_one_y_per_x = TRUE)}. For all relations where \code{min_one_y_per_x = FALSE}, only a list vector can be returned, so an error will be thrown if \code{atomic = TRUE}. If \code{A} and \code{B} do not produce a relation that conforms to the specified type or restrictions, the value of \code{error_response} will determine whether the \code{relate} ignores the error, reports it, or throws it. The full list of restrictions and relation types are listed below:
+#' The relation \eqn{F} can be restricted so it conforms to a particular type specified, for example \code{relation_type = "one_to_many"}. If \code{relation_type = NULL}, the properties are determined by restrictions specified with a named list, for example \code{restrictions = list(min_one_y_per_x = TRUE)}. For all relations where \code{min_one_y_per_x = FALSE}, only a list vector can be returned, so an error will be thrown if \code{atomic = TRUE}. If \code{A} and \code{B} do not produce a relation that conforms to the specified type or restrictions, the value of \code{map_error_response} will determine whether the \code{relate} ignores the error, reports it, or throws it. The full list of restrictions and relation types are listed below:
 #'
 #' \strong{Restrictions}
 #'
@@ -184,12 +184,14 @@
 relate <- function(X, A, B,
   default = NA,
   atomic = TRUE,
-  named = TRUE,
+  named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
   relation_type = "one_to_one",
   restrictions = list(),
-  error_response = "warn") {
+  map_error_response = "warn") {
+  # Ensure A and B are list vectors
+  A <- as.list(A); B <- as.list(B)
   # list of valid arguments
   VALID_TYPES <- c(
     "one_to_one",
@@ -212,14 +214,13 @@ relate <- function(X, A, B,
     "warn",
     "throw"
   )
-  A <- as.list(A); B <- as.list(B)
   # How to deal with errors
-  if (!(error_response %in% VALID_ERROR_RESPONSES)) {
-    stop('\"', error_response, '\"', ' is not a valid input for error_response. Use \"ignore\", \"warn\", or \"throw\".')
+  if (!(map_error_response %in% VALID_ERROR_RESPONSES)) {
+    stop('\"', map_error_response, '\"', ' is not a valid input for map_error_response. Use \"ignore\", \"warn\", or \"throw\".')
   } else {
     err <- switch(
-      error_response,
-      ignore = invisible,
+      map_error_response,
+      ignore = function(...) {},
       warn = warning,
       throw = stop
     )
@@ -323,7 +324,7 @@ relate <- function(X, A, B,
       err("Vector B is larger than A There may exist elements in the codomain that do not map from an element in the domain.")
     }
     if (length(unique(A)) != length(A) && props$max_one_y_per_x) {
-      if (error_response == "throw") {
+      if (map_error_response == "throw") {
         err("Vector A contains duplicate elements which may map to different elements in the codomain.")
       } else {
         err("Vector A contains duplicate elements which may map to different elements in the codomain. Only mapping from the first occurrence of each of these elements will be returned.")
@@ -334,10 +335,14 @@ relate <- function(X, A, B,
     }
   }
   # Map each x in X from domain to codomain
-  default_behaviour <- ifelse(
+  # How function should behave for invalid mappings
+  default_behaviour <-ifelse(
     allow_default,
     function(x) default,
-    function(x) stop(x, " does not have a valid mapping to an element in the codomain.")
+    function(x) {
+      err(x, " does not have a valid mapping to an element in the codomain.")
+      default
+    }
   )
   # Define a function to perform mapping F
   rel <- function(x) {

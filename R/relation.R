@@ -4,13 +4,16 @@
 relation <- function(A, B,
   default = NA,
   atomic = TRUE,
-  named = TRUE,
+  named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
   relation_type = "one_to_one",
   restrictions = list(),
+  map_error_response = "warn",
   handle_duplicate_mappings = TRUE,
   report_properties = FALSE) {
+  # Ensure A and B are list vectors
+  A <- as.list(A); B <- as.list(B)
   # list of valid arguments
   VALID_TYPES <- c(
     "one_to_one",
@@ -28,7 +31,22 @@ relation <- function(A, B,
     "max_one_y_per_x",
     "max_one_x_per_y"
   )
-  A <- as.list(A); B <- as.list(B)
+  VALID_ERROR_RESPONSES <- c(
+    "ignore",
+    "warn",
+    "throw"
+  )
+  # How to deal with invalid input errors in the returned function
+  if (!(map_error_response %in% VALID_ERROR_RESPONSES)) {
+    stop('\"', map_error_response, '\"', ' is not a valid input for map_error_response. Use \"ignore\", \"warn\", or \"throw\".')
+  } else {
+    err <- switch(
+      map_error_response,
+      ignore = function(...) {},
+      warn = warning,
+      throw = stop
+    )
+  }
   # Set properties of relation to enforce
   props <- list(
     "min_one_y_per_x" = FALSE,
@@ -199,10 +217,14 @@ relation <- function(A, B,
     }
   }
   # Define functions that compute Y = R(X)
-  default_behaviour <- ifelse(
+  # How function should behave for invalid mappings
+  default_behaviour <-ifelse(
     allow_default,
     function(x) default,
-    function(x) stop(x, " does not have a valid mapping to an element in the codomain.")
+    function(x) {
+      err(x, " does not have a valid mapping to an element in the codomain.")
+      default
+    }
   )
   # Define a function to perform mapping F
   rel <- function(x) {

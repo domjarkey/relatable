@@ -4,6 +4,9 @@ context("relation() returns correct errors for invalid arguments")
 test_that("fatal errors reported correctly",	{
   A1 <- c("a", "b", "c")
   B1 <- c(1, 2, 3)
+  # Invalid map_error_response given
+  expect_error(relation(A1, B1, map_error_response = "albatross"),
+    '"albatross" is not a valid input for map_error_response. Use "ignore", "warn", or "throw".')
   # atomic = TRUE when min_one_y_per_x = FALSE
   expect_error(relation(A1, B1,
     atomic = TRUE,
@@ -15,10 +18,38 @@ test_that("fatal errors reported correctly",	{
     relation_type = NULL),
     "Many-to-many and one-to-many relations can only return list vectors. Use atomic = FALSE.")
   # Invalid inputs return errors when allow_default = FALSE
-  expect_error(relation(A1, B1,
+  expect_warning(relation(A1, B1,
     allow_default = FALSE,
     atomic = FALSE,
     relation_type = NULL)("d"),
+    "d does not have a valid mapping to an element in the codomain.")
+})
+
+test_that("map_error_response options behave correctly for generated function",	{
+  A1 <- c("a", "b", "c")
+  B1 <- c(1, 2, 3)
+  # Ignore - no warning and default return
+  expect_identical(relation(A1, B1,
+    relation_type = "bijection",
+    allow_default = FALSE,
+    map_error_response = "ignore")("d"),
+    NA)
+  # Warn - warning message and default return
+  expect_warning(relation(A1, B1,
+    relation_type = "bijection",
+    allow_default = FALSE,
+    map_error_response = "warn")("d"),
+    "d does not have a valid mapping to an element in the codomain.")
+  expect_identical(suppressWarnings(relation(A1, B1,
+    relation_type = "bijection",
+    allow_default = FALSE,
+    map_error_response = "warn")("d")),
+    NA)
+  # Throw - error
+  expect_error(relation(A1, B1,
+    relation_type = "bijection",
+    allow_default = FALSE,
+    map_error_response = "throw")("d"),
     "d does not have a valid mapping to an element in the codomain.")
 })
 
