@@ -18,8 +18,8 @@ You can install `relatable` from github with:
 devtools::install_github("domjarkey/relatable")
 ```
 
-Examples
---------
+Applications
+------------
 
 ### A simple key-value dictionary
 
@@ -31,24 +31,30 @@ library(relatable)
 relate(c("March", "April", "May"), month.name, month.abb)
 #> [1] "Mar" "Apr" "May"
 
-# Create a reusable dictionary function with relation(). relate() and relation() take
-# additional arguments to determine the type of output and default return values.
-abbrev <- relation(month.name, month.abb, default = "Unknown", named = TRUE)
+# Create a reusable dictionary function with relation().
+chem_symbol <- relation(elements$Name, elements$Symbol)
 
-abbrev("January")
-#> January 
-#>   "Jan"
+chem_symbol(c("Iron", "Lithium", "Sodium"))
+#> [1] "Fe" "Li" "Na"
 
-abbrev(c("September", "October",  "Brumaire"))
-#> September   October  Brumaire 
-#>     "Sep"     "Oct" "Unknown"
+chem_symbol(c("Sodium", "Adamantium")) 
+#> [1] "Na" NA
+
+# relate() and relation() have optional arguments to determine the type of
+# output and default return values.
+chem_symbol <- relation(elements$Name, elements$Symbol,
+  default = "Unknown", named = TRUE)
+
+chem_symbol(c("Sodium", "Adamantium"))
+#>     Sodium Adamantium 
+#>       "Na"  "Unknown"
 ```
 
 ### Ensure expected inputs and safe outputs while manipulating larger data sets
 
 When working with unfamiliar data it can be easy to forget to account for all possible values a variable might take, or worse, typographical errors. Using `allow_default = FALSE`, `relatable` functions can flag unexpected inputs to ensure these problems don't arise.
 
-In the following example we use the [DWNOMINATE](https://voteview.com/about) data set assembled by Poole and Rosenthal et al, which estimates the ideological positions of US politicians. Suppose we want to create a new column in the data frame indicating political party by colour (red for Republicans, blue for Democrats):
+In the following example we use the [DWNOMINATE](https://voteview.com/about) data set assembled by Poole and Rosenthal et al, which estimates the ideological positions of US politicians. Suppose we want to create a new column for our data frame indicating political party by colour (red for Republicans, blue for Democrats):
 
 ``` r
 # Obtain data for Senators in the 113th Congress, spanning 2013-2015.
@@ -86,7 +92,7 @@ with(
     x = dwnom1,
     y = dwnom2,
     col = colour,
-    main = "US Senators in the 113th Congress",
+    main = "Ideal Points of US Senators",
     xlab = "Economic Issues",
     ylab = "Social Issues"
   )
