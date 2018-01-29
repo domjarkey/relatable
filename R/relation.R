@@ -7,11 +7,11 @@ relation <- function(A, B,
   named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
+  handle_duplicate_mappings = FALSE,
+  report_properties = FALSE,
   relation_type = "func",
   restrictions = list(),
-  map_error_response = "warn",
-  handle_duplicate_mappings = TRUE,
-  report_properties = FALSE) {
+  map_error_response = "warn") {
   # Ensure A and B are list vectors
   A <- as.list(A); B <- as.list(B)
   # list of valid arguments
