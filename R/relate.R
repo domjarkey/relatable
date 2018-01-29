@@ -2,7 +2,7 @@
 #'
 #' @description \code{relate} returns a vector \eqn{Y = F(X)} where \eqn{F} maps each element of input vector \code{X} from its position in vector \code{A} to its corresponding position in vector \eqn{B}. Can be applied as a vectorised key-value dictionary with an optional default return value. Additional options restrict mapping types so relation \eqn{F} must be a function, injective, surjective, etc.
 #'
-#' \code{relation} returns a function \eqn{F} that performs the same operation as \code{relate}. In addition to providing a reusable function, if \code{handle_duplicate_mappings = TRUE}, \code{relation} checks for and eliminates duplicate mappings that would be invalid inputs for \code{relate}. If \code{report_properties = TRUE}, \code{relation} also prints the restrictions the mapping from \code{A} to \code{B} conforms to.
+#' \code{relation} returns a reusable function \eqn{F} that performs the same operation as \code{relate}. In addition to providing a reusable function, if \code{handle_duplicate_mappings = TRUE}, \code{relation} checks for and eliminates duplicate mappings that would be invalid inputs for \code{relate}. If \code{report_properties = TRUE}, \code{relation} also prints the restrictions the mapping from \code{A} to \code{B} conforms to.
 #' @param X A vector of inputs
 #' @param A A vector possible inputs ordered to correspond to desired outputs given by \code{B}.
 #' @param B A vector possible outputs ordered to correspond to each input to the relation given by \code{A}.
@@ -11,11 +11,12 @@
 #' @param named The elements of the returned vector \eqn{Y} will be named by to their corresponding inputs in X.
 #' @param allow_default If TRUE, the provided default will be returned when \eqn{F(x)} is undefined; otherwise invalid mappings will return an error determined by the \code{map_error_response} argument.
 #' @param heterogeneous_outputs By default, elements \eqn{y} of the output vector \eqn{Y} will be returned as atomic vectors. In many-to-many and one-to-many relations, if the elements in the codomain are not all of the same type, this will coerce outputs to the same type. Set \code{heterogeneous_outputs = TRUE} to return each \eqn{y} as a list vector. This will avoid coercion of individual outputs to the same type, but may also result in messy nested list vectors.
+#' @param handle_duplicate_mappings If \code{TRUE}, each possible input/output pair in the returned function \eqn{F} for duplicate mappings and removes them. This may increase the runtime of \code{relation} slightly (although will not affect the runtime of \eqn{F}). If \code{handle_duplicate_mappings = FALSE}, duplicate mappings from \code{A} to \code{B} in \code{relate} or \code{relation} will throw an error. See Examples.
+#' @param report_properties If \code{TRUE}, \code{relation} reports which restrictions \eqn{F} conforms to. See Details.
 #' @param relation_type Ensure that the relation is restricted to a certain type, e.g. "bijection". See Details.
 #' @param restrictions A named list of logicals imposing constraints on the relation. These will only be used if relation_type is \emph{NULL}. See Details.
 #' @param map_error_response How to deal with mapping errors caused by violated restrictions. Takes values "ignore", "warn", or "throw".
-#' @param handle_duplicate_mappings If \code{TRUE}, each possible input/output pair in the returned function \eqn{F} for duplicate mappings and removes them. This may increase the runtime of \code{relation} slightly (although will not affect the runtime of \eqn{F}). If \code{handle_duplicate_mappings = FALSE}, duplicate mappings from \code{A} to \code{B} in \code{relation} will throw an error. See Examples.
-#' @param report_properties If \code{TRUE}, \code{relation} reports which restrictions \eqn{F} conforms to. See Details.
+#'
 #' @details \code{relate} returns vector of outputs \eqn{Y = F(X)} where the \eqn{F} is a relation defined by the collection of ordered pairs \eqn{(a_i, b_i)} where \eqn{a_i, b_i} are the \eqn{i}th elements of \code{A} and \code{B} respectively. If \eqn{F(x)} is undefined because \eqn{x} is not in \eqn{A} or it does not map to an element of \code{B}, \code{relate} will either return \code{default} if \code{allow_default = TRUE}.  Otherwise the function will throw an error.
 #'
 #' The relation \eqn{F} can be restricted so it conforms to a particular type specified, for example \code{relation_type = "one_to_many"}. If \code{relation_type = NULL}, the properties are determined by restrictions specified with a named list, for example \code{restrictions = list(min_one_y_per_x = TRUE)}. For all relations where \code{min_one_y_per_x = FALSE}, only a list vector can be returned, so an error will be thrown if \code{atomic = TRUE}. If \code{A} and \code{B} do not produce a relation that conforms to the specified type or restrictions, the value of \code{map_error_response} will determine whether the \code{relate} ignores the error, reports it, or throws it. The full list of restrictions and relation types are listed below:
@@ -77,6 +78,7 @@
 #' "max_one_y_per_x" = TRUE,
 #' "max_one_x_per_y" = TRUE)}}
 #' }
+#'
 #' @examples
 #' ## Map from one vector to another
 #' relate(c("a", "e", "i", "o", "u"), letters, LETTERS)
@@ -162,8 +164,8 @@
 #' # $Dunleavy
 #' # [1] "Theories of the Democratic State"
 #'
-#' ## Use relation with handle_duplicate_mappings = TRUE (this is TRUE by default)
-#' ## to avoid errors resulting from duplicate mappings
+#' ## Use relate or relation with handle_duplicate_mappings = TRUE to avoid errors resulting
+#' from duplicate mappings to and from the same inputs.
 #' nums_to_letters <- relation(
 #'   A = c(1, 2, 2, 3, 4, 5),
 #'   B = c('a', 'b', 'b', 'c', 'd', 'e'),
