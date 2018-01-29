@@ -1,6 +1,6 @@
 #' Map inputs from a vector of keys to a vector of values.
 #'
-#' @description \code{relate} returns a vector \eqn{Y = F(X)} where \eqn{F} maps each element of input vector \code{X} from its position in vector \code{A} to its corresponding position in vector \eqn{B}. Can be applied as a vectorised key-value dictionary with the option of supplying a default return value. Additional options restrict mapping types so relation \eqn{F} must be a function, injective, surjective, etc.
+#' @description \code{relate} returns a vector \eqn{Y = F(X)} where \eqn{F} maps each element of input vector \code{X} from its position in vector \code{A} to its corresponding position in vector \eqn{B}. Can be applied as a vectorised key-value dictionary with an optional default return value. Additional options restrict mapping types so relation \eqn{F} must be a function, injective, surjective, etc.
 #'
 #' \code{relation} returns a function \eqn{F} that performs the same operation as \code{relate}. In addition to providing a reusable function, if \code{handle_duplicate_mappings = TRUE}, \code{relation} checks for and eliminates duplicate mappings that would be invalid inputs for \code{relate}. If \code{report_properties = TRUE}, \code{relation} also prints the restrictions the mapping from \code{A} to \code{B} conforms to.
 #' @param X A vector of inputs
@@ -187,7 +187,7 @@ relate <- function(X, A, B,
   named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
-  relation_type = "one_to_one",
+  relation_type = "func",
   restrictions = list(),
   map_error_response = "warn") {
   # Ensure A and B are list vectors
@@ -357,7 +357,7 @@ relate <- function(X, A, B,
           function(x_index) {
             ifelse(
               x_index <= length(B),
-              unique(B[x_index]),
+              B[x_index],
               default_behaviour(x)
             )
           }

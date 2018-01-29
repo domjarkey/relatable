@@ -5,67 +5,92 @@ relatable
 
 `relatable` provides two easy-to-use, robust functions for mapping from a vector of keys to a vector of values, as well as creating and applying more sophisticated mappings, such as many-to-many, one-to-many, and many-to-one relations. These are primarily designed with two goals in mind:
 
-1.  Making reusable code that is easier to write and read.
-2.  Ensuring relations conform to specified restrictions, for example injectivity or surjectivity, and safely handle nonstandard mappings, including unspecified keys, NAs, heterogeneous lists and lists of lists, and mappings between vectors of different lengths.
+1.  Producing reusable code that is easier to write and read.
+2.  Ensuring relations conform to specified restrictions, for example injectivity or surjectivity, and safely handle nonstandard mappings, including unexpected inputs, NAs, heterogeneous lists containing multiple variable types including other lists, and mappings between vectors of uncertain or unequal lengths.
 
 Installation
 ------------
 
-You can install relatable from github with:
+You can install `relatable` from github with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("domjarkey/relatable")
 ```
 
-Applications
-------------
+Examples
+--------
 
-### As simple key-value dictionary
+### A simple key-value dictionary
 
-`relate` maps a vector of inputs `X` from their position in a vector of keys `A` to the corresponding value in vector `B`. For simple applications, `relate` provides a more elegant one-line alternative to creating and querying a named-vector dictionary. `relation` returns a function that performs the same mapping for reusability.
+For basic use, `relate` maps a vector of inputs `X` from their position in a vector of keys `A` to the corresponding value in vector `B`. `relation` returns a function that performs the same mapping for repeated usage.
 
 ``` r
 library(relatable)
-keys <- c(11, 12, 13, 14, 15)
-values <- c("Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen")
+# Use relate() for a one-off mapping of inputs from one vector to another
+relate(c("March", "April", "May"), month.name, month.abb)
+#> [1] "Mar" "Apr" "May"
 
-## One-off mapping of inputs from A to B
-relate(c(12, 14), keys, values)
-#> [1] "Twelve"   "Fourteen"
+# Create a reusable dictionary function with relation(). relate() and relation() take
+# additional arguments to determine the type of output and default return values.
+abbrev <- relation(month.name, month.abb, default = "Unknown", named = TRUE)
 
-## Create a function for repeat usage
-num_to_word <- relation(keys, values)
-num_to_word(13:15)
-#> [1] "Thirteen" "Fourteen" "Fifteen"
+abbrev("January")
+#> January 
+#>   "Jan"
 
-## Both of these require fewer lines of code, and additionally
-## do not require keys to be coerced to strings
-dictionary <- values
-names(dictionary) <- keys
-dictionary[as.character(c(12, 14))]
-#>         12         14 
-#>   "Twelve" "Fourteen"
-
-## Both of the above are much simpler to implement and less
-## vulnerable to reproduction errors than base R's switch
-## function or other alternatives such as nested if/elses
-## or complicated subsetting
-sapply(
-  as.character(c(12, 14)),
-  function(x) {
-    switch(
-      x,
-      "11" = "Eleven",
-      "12" = "Twelve",
-      "13" = "Thirteen",
-      "14" = "Fourteen",
-      "15" = "Fifteen"
-    )
-  }
-)
-#>         12         14 
-#>   "Twelve" "Fourteen"
+abbrev(c("September", "October",  "Brumaire"))
+#> September   October  Brumaire 
+#>     "Sep"     "Oct" "Unknown"
 ```
 
-`relate` maps a vector of inputs `X` from their position in a vector of keys `A` to the corresponding value in vector `B`. For simple applications it provides a more elegant one-line alternative to creating and querying a named-vector dictionary.
+### Ensure expected inputs and safe outputs while manipulating larger data sets
+
+When working with unfamiliar data it can be easy to forget to account for all possible values a variable might take, or worse, typographical errors. Using `allow_default = FALSE`, `relatable` functions can flag unexpected inputs to ensure these problems don't arise.
+
+In the following example we use the [DWNOMINATE](https://voteview.com/about) data set assembled by Poole and Rosenthal et al, which estimates the ideological positions of US politicians. Suppose we want to create a new column in the data frame indicating political party by colour (red for Republicans, blue for Democrats):
+
+``` r
+# Obtain data for Senators in the 113th Congress, spanning 2013-2015.
+US_senate_113 <- subset(
+  foreign::read.dta("ftp://k7moa.com/junkord/SL01113D21_BSSE_12.DTA"),
+  cong == 113
+)
+
+# Setting allow_default = FALSE ensures we will be notified of any funny inputs.
+US_senate_113$colour <- relate(
+  X = US_senate_113$party,
+  A = c(100, 200),
+  B = c("blue", "red"),
+  allow_default = FALSE
+)
+#> Warning in default_behaviour(x): 328 does not have a valid mapping to an
+#> element in the codomain.
+
+#> Warning in default_behaviour(x): 328 does not have a valid mapping to an
+#> element in the codomain.
+
+# Woops! Looks like we forgot to allow for the two Independent Senators in the data set,
+# coded as 328. Let's try again:
+US_senate_113$colour <- relate(
+  X = US_senate_113$party,
+  A = c(100, 200, 328),
+  B = c("blue", "red", "gray30"),
+  allow_default = FALSE
+)
+
+# No warnings, no worries!
+with(
+  US_senate_113,
+  plot(
+    x = dwnom1,
+    y = dwnom2,
+    col = colour,
+    main = "US Senators in the 113th Congress",
+    xlab = "Economic Issues",
+    ylab = "Social Issues"
+  )
+)
+```
+
+![](README-data_frames-1.png)

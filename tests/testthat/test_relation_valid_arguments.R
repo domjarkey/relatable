@@ -60,19 +60,22 @@ test_that("relation outputs correct vectors for non-one-to-one relations",	{
     list(a = 1, b = c(2, 3), c = 4, d = 4))
 })
 
-test_that("relate outputs default values as required",	{
+test_that("relation outputs default values as required",	{
   A1 <- c("a", "b", "c", "d")
   B1 <- c(1, 2, 3, 4)
   B2 <- c(1, 2, 3)
   # Input x not in domain
-  expect_identical(relate(c("e"), A1, B1),
+  expect_identical(relation(A1, B1,
+    relation_type = "one_to_one")(c("e")),
     NA)
   # Custom value for default
-  expect_identical(relate(c("a", "e"), A1, B1,
-    default = 0),
+  expect_identical(relation(A1, B1,
+    default = 0,
+    relation_type = "one_to_one")(c("a", "e")),
     c(1, 0))
   # Input x does not have a mapping to codomain
-  expect_identical(relate(c("a", "d"), A1, B2),
+  expect_identical(relation(A1, B2,
+    relation_type = "one_to_one")(c("a", "d")),
     c(1, NA))
 })
 

@@ -65,14 +65,17 @@ test_that("relate outputs default values as required",	{
   B1 <- c(1, 2, 3, 4)
   B2 <- c(1, 2, 3)
   # Input x not in domain
-  expect_identical(relate(c("e"), A1, B1),
+  expect_identical(relate(c("e"), A1, B1,
+    relation_type = "one_to_one"),
     NA)
   # Custom value for default
   expect_identical(relate(c("a", "e"), A1, B1,
+    relation_type = "one_to_one",
     default = 0),
     c(1, 0))
   # Input x does not have a mapping to codomain
-  expect_identical(relate(c("a", "d"), A1, B2),
+  expect_identical(relate(c("a", "d"), A1, B2,
+    relation_type = "one_to_one"),
     c(1, NA))
 })
 
