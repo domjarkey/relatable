@@ -187,6 +187,8 @@ relate <- function(X, A, B,
   named = FALSE,
   allow_default = TRUE,
   heterogeneous_outputs = FALSE,
+  handle_duplicate_mappings = FALSE,
+  report_properties = FALSE,
   relation_type = "func",
   restrictions = list(),
   map_error_response = "warn") {
@@ -315,23 +317,93 @@ relate <- function(X, A, B,
   if (atomic && (props$max_one_y_per_x == FALSE || heterogeneous_outputs == TRUE)) {
     stop('Many-to-many and one-to-many relations can only return list vectors. Use atomic = FALSE.')
   }
-  # Check other properties if necessary
-  if (sum(unlist(props)) > 0) {
-    if (length(A) > length(B) && props$min_one_y_per_x) {
-      err("Vector A is larger than B There may exist elements in the domain that do not map to an element in the codomain.")
-    }
-    if (length(A) < length(B) && props$min_one_x_per_y) {
-      err("Vector B is larger than A There may exist elements in the codomain that do not map from an element in the domain.")
-    }
-    if (length(unique(A)) != length(A) && props$max_one_y_per_x) {
-      if (map_error_response == "throw") {
-        err("Vector A contains duplicate elements which may map to different elements in the codomain.")
-      } else {
-        err("Vector A contains duplicate elements which may map to different elements in the codomain. Only mapping from the first occurrence of each of these elements will be returned.")
+  # Check properties as necessary
+  if (handle_duplicate_mappings == FALSE) {
+    if (sum(unlist(props)) > 0) {
+      if (length(A) > length(B) && props$min_one_y_per_x) {
+        err("Vector A is larger than B There may exist elements in the domain that do not map to an element in the codomain.")
+      }
+      if (length(A) < length(B) && props$min_one_x_per_y) {
+        err("Vector B is larger than A There may exist elements in the codomain that do not map from an element in the domain.")
+      }
+      if (length(unique(A)) != length(A) && props$max_one_y_per_x) {
+        if (map_error_response == "throw") {
+          err("Vector A contains duplicate elements which may map to different elements in the codomain.")
+        } else {
+          err("Vector A contains duplicate elements which may map to different elements in the codomain. Only mapping from the first occurrence of each of these elements will be returned.")
+        }
+      }
+      if (length(unique(B)) != length(B) && props$max_one_x_per_y) {
+        err("Vector B contains duplicate elements which may map from different elements in the domain.")
       }
     }
-    if (length(unique(B)) != length(B) && props$max_one_x_per_y) {
-      err("Vector B contains duplicate elements which may map from different elements in the domain.")
+  }
+  if (handle_duplicate_mappings || report_properties) {
+    # Check and report each property thoroughly
+    precise_properties <- list(
+      "min_one_y_per_x" = FALSE,
+      "min_one_x_per_y" = FALSE,
+      "max_one_y_per_x" = TRUE,
+      "max_one_x_per_y" = TRUE
+    )
+    # Choose an arbitrary default values c and d that are not elements of A and B respectively
+    c <- 0; d <- 0
+    while (c %in% A) {
+      c <- c + 1
+    }
+    while (d %in% B) {
+      d <- d + 1
+    }
+    # Compute the image of relation R(A) and image of inverse relation R_inv(B)
+    im <- relate(A, A, B,
+      default = d,
+      atomic = FALSE,
+      relation_type = NULL,
+      heterogeneous_outputs = TRUE)
+    inv_im <- relate(B, B, A,
+      default = c,
+      atomic = FALSE,
+      relation_type = NULL,
+      heterogeneous_outputs = TRUE)
+    # Check if min_one_y_per_x holds
+    if (sum(sapply(im, function(b) compare::compareCoerce(b, d)$result)) == 0) {
+      precise_properties$min_one_y_per_x = TRUE
+    }
+    # Check if min_one_x_per_y holds
+    if (sum(sapply(inv_im, function(a) compare::compareCoerce(a, c)$result)) == 0) {
+      precise_properties$min_one_x_per_y = TRUE
+    }
+    # Check if max_one_y_per_x does not hold
+    for (i in seq_len(min(length(A), length(B)))) {
+      if (compare::compareCoerce(B[i], unique(im[[i]]))$result == FALSE) {
+        precise_properties$max_one_y_per_x = FALSE
+        break
+      }
+    }
+    # Check if max_one_x_per_y does not hold
+    for (i in seq_len(min(length(A), length(B)))) {
+      if (compare::compareCoerce(A[i], unique(inv_im[[i]]))$result == FALSE) {
+        precise_properties$max_one_x_per_y = FALSE
+        break
+      }
+    }
+    # Report properties
+    if (report_properties) {
+      message(
+        "Relation properties:\n",
+        paste(names(precise_properties),
+          precise_properties,
+          sep = ": ",
+          collapse = "\n"))
+    }
+    # Compare true properties to restrictions
+    violated_restrictions <- unlist(precise_properties) < unlist(props)
+    if (sum(violated_restrictions) > 0) {
+      err(
+        "Restrictions violated:\n",
+        paste(names(props)[violated_restrictions],
+          collapse = "\n")
+      )
     }
   }
   # Map each x in X from domain to codomain
