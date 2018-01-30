@@ -34,7 +34,7 @@ relation(A, B, default = NA, atomic = TRUE, named = FALSE,
 
 \item{heterogeneous_outputs}{By default, elements \eqn{y} of the output vector \eqn{Y} will be returned as atomic vectors. In many-to-many and one-to-many relations, if the elements in the codomain are not all of the same type, this will coerce outputs to the same type. Set \code{heterogeneous_outputs = TRUE} to return each \eqn{y} as a list vector. This will avoid coercion of individual outputs to the same type, but may also result in messy nested list vectors.}
 
-\item{handle_duplicate_mappings}{If \code{TRUE}, each possible input/output pair in the returned function \eqn{F} for duplicate mappings and removes them. This may increase the runtime of \code{relation} slightly (although will not affect the runtime of \eqn{F}). If \code{handle_duplicate_mappings = FALSE}, duplicate mappings from \code{A} to \code{B} in \code{relate} or \code{relation} will throw an error. See Examples.}
+\item{handle_duplicate_mappings}{If \code{TRUE}, each possible input/output pair in the returned function \eqn{F} for duplicate mappings and removes them. This may increase the runtime for larger mappings, but only for the first instance of \code{relation}. The function returned by \code{relation} does not need to re-check these properties, so will run more quickly. If \code{handle_duplicate_mappings = FALSE}, duplicate mappings from \code{A} to \code{B} in \code{relate} or \code{relation} will return multiple instances of the same output. See Examples.}
 
 \item{report_properties}{If \code{TRUE}, \code{relation} reports which restrictions \eqn{F} conforms to. See Details.}
 
@@ -197,8 +197,24 @@ relate(
 # $Dunleavy
 # [1] "Theories of the Democratic State"
 
-## Use relate or relation with handle_duplicate_mappings = TRUE to avoid errors resulting
-from duplicate mappings to and from the same inputs.
+## Duplicate mappings will return multiple copies by default:
+relate(
+  X = 1:3,
+  A = c(1, 2, 2, 3, 4, 5),
+  B = c('a', 'b', 'b', 'c', 'd', 'e'),
+  relation_type = "many_to_many",
+  atomic = FALSE
+)
+# [[1]]
+# [1] "a"
+#
+# [[2]]
+# [1] "b" "b"
+#
+# [[3]]
+# [1] "c"
+
+## Use handle_duplicate_mappings = TRUE to ignore these and avoid mapping errors.
 nums_to_letters <- relation(
   A = c(1, 2, 2, 3, 4, 5),
   B = c('a', 'b', 'b', 'c', 'd', 'e'),
