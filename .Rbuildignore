@@ -3,3 +3,5 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^NEWS\.md$
+^NEWS\.rmd$
+^NEWS\.Rmd$
