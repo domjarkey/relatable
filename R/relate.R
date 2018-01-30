@@ -19,7 +19,7 @@
 #'
 #' @details \code{relate} returns vector of outputs \eqn{Y = F(X)} where the \eqn{F} is a relation defined by the collection of ordered pairs \eqn{(a_i, b_i)} where \eqn{a_i, b_i} are the \eqn{i}th elements of \code{A} and \code{B} respectively. If \eqn{F(x)} is undefined because \eqn{x} is not in \eqn{A} or it does not map to an element of \code{B}, \code{relate} will either return \code{default} if \code{allow_default = TRUE}.  Otherwise the function will throw an error.
 #'
-#' The relation \eqn{F} can be restricted so it conforms to a particular type specified, for example \code{relation_type = "one_to_many"}. If \code{relation_type = NULL}, the properties are determined by restrictions specified with a named list, for example \code{restrictions = list(min_one_y_per_x = TRUE)}. For all relations where \code{min_one_y_per_x = FALSE}, only a list vector can be returned, so an error will be thrown if \code{atomic = TRUE}. If \code{A} and \code{B} do not produce a relation that conforms to the specified type or restrictions, the value of \code{map_error_response} will determine whether the \code{relate} ignores the error, reports it, or throws it. The full list of restrictions and relation types are listed below:
+#' The relation \eqn{F} can be restricted so it conforms to a particular type specified by \code{relation_type}. If \code{relation_type = NULL}, the properties are determined by restrictions specified with a named list, for example \code{restrictions = list(min_one_y_per_x = TRUE)}. For all relations where \code{min_one_y_per_x = FALSE}, only a list vector can be returned, so an error will be thrown if \code{atomic = TRUE}. If \code{A} and \code{B} do not produce a relation that conforms to the specified type or restrictions, the value of \code{map_error_response} will determine whether the \code{relate} ignores the error, reports it, or throws it. The full list of restrictions and relation types are listed below:
 #'
 #' \strong{Restrictions}
 #'
@@ -38,45 +38,109 @@
 #' \strong{Relation types}
 #' \describe{
 #'   \item{\code{relation_type = "one_to_one"}}{One-to-one relations require that each element in the domain to map to at most one element in the codomain, and each element of the codomain to map from the only one element in the domain. There may still be elements in \code{A} that do not have a mapping to an element in \code{B}, and vice versa. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = FALSE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = TRUE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = TRUE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #'   \item{\code{relation_type = "many_to_many"}}{Many-to-many relations allow multiple elements in the domain to map to the same element of the codomain, and multiple elements of the codomain to map from the same element of the domain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = FALSE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = FALSE,
-#' "max_one_x_per_y" = FALSE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"max_one_x_per_y" = FALSE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #'   \item{\code{relation_type = "one_to_many"}}{One-to-many relations require each element of the domain to map to a distinct set of one or more elements in the codomain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = FALSE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = FALSE,
-#' "max_one_x_per_y" = TRUE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"max_one_x_per_y" = TRUE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #'   \item{\code{relation_type = "many_to_one"}}{Many-to-one relations allows sets of one or more elements in the domain to map to the same distinct element in the codomain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = FALSE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = FALSE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = FALSE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = FALSE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #' \item{\code{relation_type = "func"}}{Functions map each element in the domain to exactly one element in the codomain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = TRUE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = FALSE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = FALSE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #' \item{\code{relation_type = "injection"}}{A function is injective if every element of the domain maps to a unique element of the codomain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = TRUE,
-#' "min_one_x_per_y" = FALSE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = TRUE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"min_one_x_per_y" = FALSE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = TRUE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #' \item{\code{relation_type = "surjection"}}{A function is surjective if every element of the codomain maps from an element of the domain. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = TRUE,
-#' "min_one_x_per_y" = TRUE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = FALSE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"min_one_x_per_y" = TRUE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = FALSE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #' \item{\code{relation_type = "bijection"}}{A function is bijective if it is both injective and surjective, i.e. a complete one-to-one mapping. This is equivalent to
-#' \code{restrictions = list("min_one_y_per_x" = TRUE,
-#' "min_one_x_per_y" = TRUE,
-#' "max_one_y_per_x" = TRUE,
-#' "max_one_x_per_y" = TRUE)}}
+#'   \describe{
+#'     \item{\code{restrictions = list(}}{
+#'       \describe{
+#'         \item{}{\code{"min_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"min_one_x_per_y" = TRUE,}}
+#'         \item{}{\code{"max_one_y_per_x" = TRUE,}}
+#'         \item{}{\code{"max_one_x_per_y" = TRUE}}
+#'       }
+#'     }
+#'     \item{)}{}
+#'   }
+#' }
 #' }
 #'
 #' @examples
