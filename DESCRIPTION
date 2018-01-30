@@ -17,3 +17,4 @@ Suggests: testthat,
     rmarkdown,
     tibble
 VignetteBuilder: knitr
+URL: https://github.com/domjarkey/relatable
