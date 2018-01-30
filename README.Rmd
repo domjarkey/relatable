@@ -9,7 +9,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "man/figures/README-"
 )
 ```
 
@@ -85,8 +85,10 @@ US_senate_113$colour <- relate(
   B = c("blue", "red", "gray30"),
   allow_default = FALSE
 )
+```
 
-## No warnings, no worries!
+No warnings, no worries!
+```{r senate_plot}
 with(
   US_senate_113,
   plot(

@@ -107,8 +107,11 @@ US_senate_113$colour <- relate(
   B = c("blue", "red", "gray30"),
   allow_default = FALSE
 )
+```
 
-## No warnings, no worries!
+No warnings, no worries\!
+
+``` r
 with(
   US_senate_113,
   plot(
@@ -122,4 +125,4 @@ with(
 )
 ```
 
-![](README-data_frames-1.png)<!-- -->
+![](man/figures/README-senate_plot-1.png)<!-- -->
