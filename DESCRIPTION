@@ -8,7 +8,7 @@ Description: Functions to safely map from a vector of keys to a vector of values
 Depends: R (>= 3.4.3)
 Imports:
     compare (>= 0.2-6)
-License: MIT + file LICENCE
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
