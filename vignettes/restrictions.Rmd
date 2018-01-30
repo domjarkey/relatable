@@ -1,6 +1,5 @@
 ---
 title: "Relation Types and Restrictions"
-author: "Dominic Jarkey"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
