@@ -1,6 +1,6 @@
 Package: relatable
 Type: Package
-Title: Simple and versatile functions for mapping key-value pairs and working with many-to-many, one-to-many, and many-to-one relations
+Title: Simple and Versatile Functions for Mapping Key-Value Pairs and Working with Many-to-Many, One-to-Many, and Many-to-One Relations
 Version: 1.0.0
 Author: person("Dominic", "Jarkey", email = "dominic.jarkey@gmail.com", role = c("aut", "cre"))
 Maintainer: Dominic Jarkey <dominic.jarkey@gmail.com>
