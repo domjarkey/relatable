@@ -1,4 +1,5 @@
 ---
+title: relatable
 output: github_document
 ---
 
@@ -11,8 +12,6 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 ```
-
-# relatable
 
 `relatable` provides two easy-to-use, robust functions for mapping from a vector of keys to a vector of values, as well as creating and applying more sophisticated mappings, such as many-to-many, one-to-many, and many-to-one relations. These are primarily designed with two goals in mind:
 

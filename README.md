@@ -1,15 +1,22 @@
+relatable
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-relatable
-=========
 
-`relatable` provides two easy-to-use, robust functions for mapping from a vector of keys to a vector of values, as well as creating and applying more sophisticated mappings, such as many-to-many, one-to-many, and many-to-one relations. These are primarily designed with two goals in mind:
+`relatable` provides two easy-to-use, robust functions for mapping from
+a vector of keys to a vector of values, as well as creating and applying
+more sophisticated mappings, such as many-to-many, one-to-many, and
+many-to-one relations. These are primarily designed with two goals in
+mind:
 
 1.  Producing reusable code that is easier to write and read.
-2.  Ensuring relations conform to specified restrictions, for example injectivity or surjectivity, and safely handle nonstandard mappings, including unexpected inputs, NAs, heterogeneous lists containing multiple variable types including other lists, and mappings between vectors of uncertain or unequal lengths.
+2.  Ensuring relations conform to specified restrictions, for example
+    injectivity or surjectivity, and safely handle nonstandard mappings,
+    including unexpected inputs, NAs, heterogeneous lists containing
+    multiple variable types including other lists, and mappings between
+    vectors of uncertain or unequal lengths.
 
-Installation
-------------
+## Installation
 
 You can install `relatable` from github with:
 
@@ -18,12 +25,19 @@ You can install `relatable` from github with:
 devtools::install_github("domjarkey/relatable")
 ```
 
-Examples
---------
+## Examples
+
+For more detailed information, see the help documentation with `?relate`
+and the [Relation Types and
+Restrictions](https://github.com/domjarkey/relatable/blob/master/vignettes/restrictions.Rmd)
+vignette.
 
 ### A simple key-value dictionary
 
-For basic use, `relate` maps a vector of inputs `X` from their position in a vector of keys `A` to the corresponding value in vector `B`. `relation` returns a function that performs the same mapping for repeated usage.
+For basic use, `relate` maps a vector of inputs `X` from their position
+in a vector of keys `A` to the corresponding value in vector `B`.
+`relation` returns a function that performs the same mapping for
+repeated usage.
 
 ``` r
 library(relatable)
@@ -53,9 +67,17 @@ chem_symbol(c("Sodium", "Adamantium"))
 
 ### Ensure expected inputs while manipulating larger data sets
 
-When working with unfamiliar data it can be easy to forget to account for all possible values a variable might take, or worse, typographical entry errors. Using `allow_default = FALSE`, `relatable` functions can flag unexpected inputs to ensure these problems don't arise.
+When working with unfamiliar data it can be easy to forget to account
+for all possible values a variable might take, or worse, typographical
+entry errors. Using `allow_default = FALSE`, `relatable` functions can
+flag unexpected inputs to ensure these problems don’t arise.
 
-In the following example we use the [DWNOMINATE](https://voteview.com/about) data set assembled by Poole and Rosenthal et al, which estimates the ideological positions of US politicians. Suppose we want to create a new column for our data frame indicating political party by colour (red for Republicans, blue for Democrats):
+In the following example we use the
+[DWNOMINATE](https://voteview.com/about) data set assembled by Poole and
+Rosenthal et al, which estimates the ideological positions of US
+politicians. Suppose we want to create a new column for our data frame
+indicating political party by colour (red for Republicans, blue for
+Democrats):
 
 ``` r
 ## Obtain data for senators in the 113th Congress, spanning 2013-2015.
@@ -100,4 +122,4 @@ with(
 )
 ```
 
-![](README-data_frames-1.png)
+![](README-data_frames-1.png)<!-- -->
