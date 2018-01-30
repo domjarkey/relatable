@@ -24,9 +24,9 @@ relation(A, B, default = NA, atomic = TRUE, named = FALSE,
 
 \item{B}{A vector possible outputs ordered to correspond to each input to the relation given by \code{A}.}
 
-\item{default}{The default value to return if the value of \eqn{F(x)} is undefined.}
+\item{default}{The default value to return if \eqn{F(x)} is undefined.}
 
-\item{atomic}{If \code{TRUE}, the return vector \eqn{Y} will be atomic; If \code{TRUE} \eqn{Y} will be a list vector. To allow for multiple outputs from a single input, \code{atomic} must be set to \code{FALSE} if \code{relation_type = "many_to_many"} or \code{"one_to_many"}, or if \code{relation_type = NULL} and \code{max_one_y_per_x = FALSE} is an element of \code{restrictions} list.}
+\item{atomic}{If \code{TRUE}, the return vector \eqn{Y} will be atomic; If \code{FALSE} \eqn{Y} will be a list vector. To allow for multiple outputs from a single input, \code{atomic} must be set to \code{FALSE} if \code{relation_type = "many_to_many"} or \code{"one_to_many"}, or if \code{relation_type = NULL} and \code{max_one_y_per_x = FALSE} is an element of \code{restrictions} list.}
 
 \item{named}{The elements of the returned vector \eqn{Y} will be named by to their corresponding inputs in X.}
 
@@ -40,7 +40,7 @@ relation(A, B, default = NA, atomic = TRUE, named = FALSE,
 
 \item{relation_type}{Ensure that the relation is restricted to a certain type, e.g. "bijection". See Details.}
 
-\item{restrictions}{A named list of logicals imposing constraints on the relation. These will only be used if relation_type is \emph{NULL}. See Details.}
+\item{restrictions}{A named list of logicals imposing constraints on the relation. These will only be used if relation_type is \code{NULL}. See Details.}
 
 \item{map_error_response}{How to deal with mapping errors caused by violated restrictions. Takes values "ignore", "warn", or "throw".}
 }
