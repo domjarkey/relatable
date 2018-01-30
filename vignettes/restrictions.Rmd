@@ -3,7 +3,7 @@ title: "Relation Types and Restrictions"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{restrictions}
+  %\VignetteIndexEntry{Using relation types and restrictions with relatable functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
