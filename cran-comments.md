@@ -1,3 +1,10 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* Shortened the title in DESCRIPTION
+* Used Authors@R field to indicate package author and maintainer
+* LICENSE contains only 2 lines for year and copyright holder
+
 ## Test environments
 * local OS X install, R 3.4.3
 * ubuntu 12.04 (on travis-ci), R 3.4.3
