@@ -18,19 +18,22 @@ mind:
 
 ## Installation
 
-You can install `relatable` from github with:
-
 ``` r
+# Install from CRAN:
+install.packages("relatable")
+
+# The development version is also available from GitHub:
 # install.packages("devtools")
 devtools::install_github("domjarkey/relatable")
 ```
 
-## Examples
+## Usage
 
-For more detailed information, see the help documentation with `?relate`
-and the [Relation Types and
-Restrictions](https://github.com/domjarkey/relatable/blob/master/vignettes/restrictions.Rmd)
-vignette.
+For more detailed information, see the `relatable` help documentation
+[online](https://cran.r-project.org/web/packages/relatable/relatable.pdf)
+or with `?relate` in R, as well as the [Relation Types and
+Restrictions](https://cran.r-project.org/web/packages/relatable/vignettes/restrictions.html)
+vignette (`vignette("restrictions")` in R).
 
 ### A simple key-value dictionary
 
