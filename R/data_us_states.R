@@ -7,10 +7,12 @@
 #' \describe{
 #'   \item{Name}{US Region Name}
 #'   \item{Type}{State, State (Commonwealth), or Federal District}
+#'   \item{Capital}{State Capital}
 #'   \item{ANSI}{American National Standards Institute 2-letter code}
-#'   \item{ANSI_digit}{American National Standards Institute 2-digit code. This is stored as a character to ensure all entries are two characters long.}
+#'   \item{ANSI_digit}{American National Standards Institute 2-digit code. This is stored as a character to ensure all entries are two characters long}
+#'   \item{ISO}{International Organization for Standardization 3166-2 code for US States}
 #'   \item{USPS}{United States Postal Service 2-letter code}
-#'   \item{USCG}{United States Coast Guard 2-letter code (used as prefices for vessel numbers).}
+#'   \item{USCG}{United States Coast Guard 2-letter code (used as prefices for vessel numbers)}
 #'   \item{GPO}{US Government Printing Office abbreviations}
 #'   \item{AP}{Associated Press Stylebook abbreviations}
 #' }
