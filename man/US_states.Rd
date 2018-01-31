@@ -3,7 +3,7 @@
 \docType{data}
 \name{US_states}
 \alias{US_states}
-\title{Data of US state names and abbreviations}
+\title{US state names and abbreviations}
 \format{A data frame with 51 rows and 10 variables:
 \describe{
   \item{Name}{US Region Name}

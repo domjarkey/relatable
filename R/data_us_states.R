@@ -1,4 +1,4 @@
-#' Data of US state names and abbreviations
+#' US state names and abbreviations
 #'
 #' A dataset containing names of US states and their abbreviations under various standards
 #' including ANSI, ISO, USPS, USCG, GPO, Associated Press.
