@@ -12,6 +12,12 @@ knitr::opts_chunk$set(
 )
 ```
 
+# relatable 1.0.0.9000
+
+## Features
+
+`US_states` dataset included with state names and their abbreviations under various standards including ANSI, ISO, USPS, USCG, GPO, Associated Press.
+
 # relatable 1.0.0
 
 ## Features
