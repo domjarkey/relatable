@@ -3,6 +3,14 @@ NEWS
 
 <!-- README.md is generated from NEWS.Rmd. Please edit that file -->
 
+# Development version 1.0.0.9000
+
+## New data set
+
+  - `US_states` dataset included with state names and their
+    abbreviations under various standards including ANSI, ISO, USPS,
+    USCG, GPO, Associated Press.
+
 # relatable 1.0.0
 
 ## Features
