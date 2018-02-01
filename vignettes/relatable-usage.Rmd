@@ -1,0 +1,89 @@
+---
+title: "Basic Usage"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick guide to relatable functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates the basic applications of the `relate` and `relation` functions. For more detailed information, see the `relatable` help documentation with `?relate` in R or [online](https://cran.r-project.org/web/packages/relatable/relatable.pdf), as well as the [Relation Types and Restrictions](https://cran.r-project.org/web/packages/relatable/vignettes/relatable-restrictions.html) vignette (`vignette("relatable-restrictions")` in R).
+
+### A simple key-value dictionary
+
+For basic use, `relate` maps a vector of inputs `X` from their position in a vector of keys `A` to the corresponding value in vector `B`. `relation` returns a function that performs the same mapping for repeated usage. 
+
+```{r key_value}
+library(relatable)
+# Use relate() for a one-off mapping of inputs from one vector to another
+relate(c("March", "April", "May"), month.name, month.abb)
+
+# Create a reusable dictionary function with relation().
+chem_symbol <- relation(elements$Name, elements$Symbol)
+
+chem_symbol(c("Iron", "Lithium", "Sodium"))
+
+# Unexpected inputs return <NA> by default, but this can be changed
+chem_symbol(c("Sodium", "Adamantium"))
+
+# relate() and relation() have optional arguments to determine the type of
+# output and default return values.
+chem_symbol <- relation(elements$Name, elements$Symbol,
+  default = "Unknown", named = TRUE)
+
+chem_symbol(c("Sodium", "Adamantium"))
+```
+
+### Ensure expected inputs while manipulating larger data sets
+
+When working with unfamiliar data it can be easy to forget to account for all possible values a variable might take, or worse, typographical entry errors. Using `allow_default = FALSE`, `relatable` functions can flag unexpected inputs to ensure these problems don't arise.
+
+In the following example we use the [DWNOMINATE](https://voteview.com/about) data set assembled by Poole and Rosenthal et al, which estimates the ideological positions of US politicians. Suppose we want to create a new column for our data frame indicating political party by colour (red for Republicans, blue for Democrats):
+
+```{r data_frames}
+## Obtain data for senators in the 113th Congress, spanning 2013-2015.
+US_senate_113 <- subset(
+  foreign::read.dta("ftp://k7moa.com/junkord/SL01113D21_BSSE_12.DTA"),
+  cong == 113
+)
+
+## Setting allow_default = FALSE ensures we will be notified of any funny inputs.
+US_senate_113$colour <- relate(
+  X = US_senate_113$party,
+  A = c(100, 200),
+  B = c("blue", "red"),
+  allow_default = FALSE
+)
+
+## Woops! Looks like we forgot to allow for the two Independent Senators in the data set,
+## coded as 328. Let's try again:
+US_senate_113$colour <- relate(
+  X = US_senate_113$party,
+  A = c(100, 200, 328),
+  B = c("blue", "red", "gray30"),
+  allow_default = FALSE
+)
+```
+
+No warnings, no worries!
+```{r senate_plot}
+with(
+  US_senate_113,
+  plot(
+    x = dwnom1,
+    y = dwnom2,
+    col = colour,
+    main = "Ideal Points of US Senators",
+    xlab = "Economic Issues",
+    ylab = "Social Issues"
+  )
+)
+```
