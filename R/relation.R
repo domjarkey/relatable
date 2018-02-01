@@ -1,4 +1,4 @@
-#' @rdname relatable_functions
+#' @rdname relatable-functions
 #'
 #' @export
 relation <- function(A, B,
