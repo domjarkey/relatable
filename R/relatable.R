@@ -1,0 +1,20 @@
+#' relatable: Functions for Mapping Key-Value Pairs, Many-to-Many, One-to-Many, and Many-to-One Relations
+#'
+#' The \code{relatable} package provides two functions to safely map from a vector of keys to a vector of values, determine properties of a given relation, or ensure a relation conforms to a given type, such as many-to-many, one-to-many, injective, surjective, or bijective. Permits default return values for use similar to a vectorised switch statement, as well as safely handling large vectors, NAs, and duplicate mappings.
+#'
+#'
+#' @section Functions:
+#'
+#' @seealso
+#'
+#' \code{\link{relate}}
+#'
+#' \code{\link{relation}}
+#'
+#' \href{https://github.com/domjarkey/relatable/blob/master/man/relate.Rd}{relate}
+#'
+#' \code{\href{https://github.com/domjarkey/relatable/blob/master/man/relate.Rd}{relate}}
+#'
+#' @docType package
+#' @name relatable
+NULL
