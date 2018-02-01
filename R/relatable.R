@@ -5,15 +5,22 @@
 #'
 #' @section Functions:
 #'
-#' @seealso
+#' \describe{
+#'   \item{\code{\link{relate}}}{Returns a vector \eqn{Y = F(X)} where \eqn{F} maps each element of input vector \code{X} from its position in vector \code{A} to its corresponding position in vector \eqn{B}.}
+#'   \item{\code{\link{relation}}}{Returns a function \eqn{F} that maps each element of input vector \code{X} from its position in vector \code{A} to its corresponding position in vector \eqn{B}.}
+#' }
 #'
 #' \code{\link{relate}}
+#'
+#' @seealso
+#'
+#' \code{\link{restrictions}}
 #'
 #' \code{\link{relation}}
 #'
 #' \href{https://github.com/domjarkey/relatable/blob/master/man/relate.Rd}{relate}
 #'
-#' \code{\href{https://github.com/domjarkey/relatable/blob/master/man/relate.Rd}{relate}}
+#' \href{https://github.com/domjarkey/relatable/blob/master/man/relate.Rd}{relate}
 #'
 #' @docType package
 #' @name relatable
